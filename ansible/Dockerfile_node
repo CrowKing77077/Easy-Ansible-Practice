@@ -1,0 +1,30 @@
+FROM ubuntu:22.04
+
+# 업데이트 및 업그레이드
+RUN DEBIAN_FRONTEND=noninteractive apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+
+# 표준 시간대 UTC로 수정
+RUN apt-get update && apt install tzdata -y
+ENV TZ="UTC"
+
+RUN apt-get install -y curl nano wget software-properties-common locales
+
+# ping, net-tools, nslookup 설치 
+RUN apt-get install -y iputils-ping net-tools dnsutils cron passwd
+
+RUN locale-gen en_US.UTF-8
+
+RUN apt-get install -y openssh-server python3 && \
+    apt-get clean && \
+    mkdir /var/run/sshd
+    # echo 'root:${ROOT_PASSWORD}' | chpasswd
+    
+# root 로그인 및 패스워드 인증 허용
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+    
+# 22번 포트 열기
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd", "-D"]

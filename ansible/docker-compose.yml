@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  core:
+    image: ansible-practice-core:1.0
+    container_name: ansible-practice-core
+    tty: true
+    volumes:
+      - ${HOST_PATH}\volume:/etc/ansible
+    networks:
+      - ansible_net
+
+  node1:
+    image: ansible-practice-node:1.0
+    container_name: ansible-practice-node1
+    ports:
+      - "80:80"
+    networks:
+      - ansible_net
+
+  node2:
+    image: ansible-practice-node:1.0
+    container_name: ansible-practice-node2
+    ports:
+      - "81:80"
+    networks:
+      - ansible_net
+
+  node3:
+    image: ansible-practice-node:1.0
+    container_name: ansible-practice-node3
+    ports:
+      - "82:80"
+    networks:
+      - ansible_net
+
+networks:
+  ansible_net:
+    driver: bridge
